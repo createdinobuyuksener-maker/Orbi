@@ -1,0 +1,445 @@
+import json
+İç Sistem
+import re
+Tkinter olarak TK İtLe
+TKINTER'den mesaj kutusunu aktar, kaydırılmış metin
+
+DATA_FILE = "orbi_users.json"
+
+sınıf OrbiApp:
+ def __init__(self, root):
+ self.root = kök
+ self.root.title("Orbi")
+ self.root.geometry("820x620")
+ self.root.configure(bg="#0f172a")
+
+self.current_user = Yok
+ self.users = self.load_users()
+
+self.build_auth_ui()
+
+# -------------------- VERI --------------------
+ def load_users(ben):
+ eğer os.path.exists(DATA_FILE) değilse:
+ return {}
+ Deneyin:
+ open(DATA_FILE, "r", encoding="utf-8") ile f olarak kullanılır:
+ return json.load(f)
+ Except (json. JSONDecodeError, OSError):
+ return {}
+
+def save_users(ben):
+ open(DATA_FILE, "w", encoding="utf-8") ile f olarak bulunur:
+ json.dump(self.users, f, ensure_ascii=Yanlış, girinti=2)
+
+# -------------------- UI YARDIMCILARI --------------------
+ def clear_window(ben):
+ widget için self.root.winfo_children():
+ widget.destroy()
+
+def styled_label(self, parent, text, size=14, bold=Yanlış):
+ font = ("Arial", size, "bold" eğer kalın varsa "normal")
+ TK'yi geri ver. Etiket(parent, text=text, font=font, bg="#0f172a", fg="white")
+
+def styled_button(self, parent, text, command, bg="#22c55e"):
+ TK'yi geri ver. Button(
+ ebeveyn,
+ metin=metin,
+ komut=komut,
+ bg=bg,
+ fg="beyaz",
+ activebackground=bg,
+ activeforeground="beyaz",
+ font=("Arial", 11, "kalın yazı"),
+ bd=0,
+ padx=12,
+ pady=8,
+ cursor="hand2"
+ )
+
+def styled_entry(ben, ebeveyn, gösteri=Hiç):
+ TK'yi geri ver. Giriş(
+ ebeveyn,
+ font=("Arial", 12),
+ bg="#1e293b",
+ fg="beyaz",
+ insertbackground="beyaz",
+ Relief="düz",
+ genişlik=30,
+ göster=göster
+ )
+
+# -------------------- Doğrulama arayüzü --------------------
+ def build_auth_ui(ben):
+ self.clear_window()
+
+konteyner = tk. Frame(self.root, bg="#0f172a")
+ container.pack(expand=True)
+
+self.styled_label(konteyner, " 🤖 Orbi", 28, True).pack(pady=(0, 6))
+ self.styled_label(
+ konteyner,
+ "Tek dosya Python sürümü • Kayıt • Giriş • Sohbet • Matematik",
+ 11
+ ).pack(pady=(0, 24))
+
+kart = tk. Frame(container, bg="#111827", padx=24, pady=24)
+ card.pack()
+
+self.styled_label(kart, "Giriş / Kayıt", 18, True).pack(pady=(0, 16))
+
+self.styled_label(kart, "Kullanıcı adı", 11).pack(anchor="w")
+ self.username_entry = self.styled_entry(kart)
+ self.username_entry.pack(pady=(4, 12))
+
+self.styled_label(kart, "Şifre", 11).pack(anchor="w")
+ self.password_entry = self.styled_entry(kart, göster="*")
+ self.password_entry.pack(pady=(4, 16))
+
+btn_row = tk. Frame(kart, bg="#111827")
+ btn_row.pack()
+
+self.styled_button(btn_row, "Kayıt Ol", self.register_user).pack(side="left", padx=6)
+ self.styled_button(btn_row, "Giriş Yap", self.login_user, bg="#475569").pack(side="left", padx=6)
+
+self.username_entry.bind("<Return>", lambda e: self.login_user())
+ self.password_entry.bind("<Return>", lambda e: self.login_user())
+
+# -------------------- SOHBET ARAYÜZÜ --------------------
+ def build_chat_ui(kendi):
+ self.clear_window()
+
+üst = TK. Frame(self.root, bg="#0f172a")
+ top.pack(fill="x", padx=16, pady=12)
+
+self.styled_label(top, f" 🤖 Orbi • Hoş geldin {self.current_user}", 18, True).pack(side="left")
+ self.styled_button(üst, "Çıkış Yap", self.logout_user, bg="#ef4444").pack(side="right")
+
+ekran = TK. Frame(self.root, bg="#111827", padx=16, pady=12)
+ screen.pack(fill="x", padx=16, pady=(0, 10))
+
+self.screen_title = tk. Plak Şirketi(
+ ekran,
+ text=" 🟢 ORBİ AKTİF",
+ font=("Arial", 16, "kalın yazı"),
+ bg="#111827",
+ fg="beyaz"
+ )
+ self.screen_title.pack()
+
+self.screen_message = tk. Plak Şirketi(
+ ekran,
+ text="Hazırım. Bana bir şey yazabilirsin.",
+ font=("Arial", 11),
+ bg="#111827",
+ fg="#cbd5e1"
+ )
+ self.screen_message.pack(pady=(6, 0))
+
+orta = tk. Frame(self.root, bg="#0f172a")
+ middle.pack(fill="both", expand=True, padx=16, pady=(0, 10))
+
+self.chat_box = kaydırmalı metin. ScrolledText(
+ ortada,
+ wrap=tk. KELIME,
+ font=("Arial", 12),
+ bg="#111827",
+ fg="beyaz",
+ insertbackground="beyaz",
+ Relief="flat"
+ )
+ self.chat_box.pack(fill="ikisi", expand=Doğru)
+ self.chat_box.config(state="disabled")
+
+hızlı = tk. Frame(self.root, bg="#0f172a")
+ quick.pack(fill="x", padx=16, pady=(0, 10))
+
+quick_buttons = [
+ ("yardım", "yardım"),
+ ("durum", "durum"),
+ ("2+3", "2+3"),
+ ("10/2", "10/2"),
+ ("python", "python"),
+ ("python döngü", "python döngü"),
+ ("python fonksiyon", "python fonksiyon"),
+ ("proje", "proje"),
+ ("proje oyun", "proje oyun"),
+ ("proje hesap", "proje hesap makinesi"),
+ ]
+
+Metin için, quick_buttons içinde komut verin:
+ self.styled_button(quick, text, lambda c=command: self.quick_send(c), bg="#475569").pack(
+ side="left", padx=4, pady=4
+ )
+
+alt = tk. Frame(self.root, bg="#0f172a")
+ bottom.pack(fill="x", padx=16, pady=(0, 14))
+
+self.message_entry = tk. Giriş(
+ alt,
+ font=("Arial", 12),
+ bg="#1e293b",
+ fg="beyaz",
+ insertbackground="beyaz",
+ Relief="flat"
+ )
+ self.message_entry.pack(side="left", fill="x", expand=True, ipady=10, padx=(0, 10))
+
+self.styled_button(alt, "Gönder", self.send_message).pack(side="right")
+
+self.message_entry.bind("<Return>", lambda e: self.send_message())
+
+self.status_label = tk. Plak Şirketi(
+ self.root,
+ text="",
+ font=("Arial", 10),
+ bg="#0f172a",
+ fg="#cbd5e1"
+ )
+ self.status_label.pack(pady=(0, 10))
+
+self.load_chat_history()
+ self.update_status()
+
+# -------------------- ONAY EYLEMLERİ --------------------
+ def register_user(ben):
+ kullanıcı adı = self.username_entry.get().strip()
+ şifre = self.password_entry.get().strip()
+
+Kullanıcı adı ya da şifre değilse:
+ messagebox.showwarning("Uyarı", "Kullanıcı adı ve şifre boş olamaz.")
+ Dönüş
+
+if kullanıcı adı self.users'te:
+ messagebox.showwarning("Uyarı", "Bu kullanıcı adı zaten var.")
+ Dönüş
+
+self.users[kullanıcı adı] = {
+ "password": şifre,
+ "profile_name": kullanıcı adı,
+ "sohbetler": []
+ }
+ self.save_users()
+ messagebox.showinfo("Başarılı", "Kayıt başarılı 😎")
+
+def login_user(ben):
+ kullanıcı adı = self.username_entry.get().strip()
+ şifre = self.password_entry.get().strip()
+
+Kullanıcı adı self.users veya self.users[username]["password"] içinde değilse, != password:
+ messagebox.showerror("Hata", "Kullanıcı adı veya şifre yanlış.")
+ Dönüş
+
+self.current_user = kullanıcı adı
+ self.build_chat_ui()
+
+def logout_user(kendi):
+ self.current_user = Yok
+ self.build_auth_ui()
+
+# -------------------- SOHBET EYLEMLERİ --------------------
+ def set_screen(benlik, başlık, mesaj):
+ self.screen_title.config(text=title)
+ self.screen_message.config(text=message)
+
+def append_chat(self, gönderen, metin):
+ self.chat_box.config(state="normal")
+ self.chat_box.insert(tk. END, f"{sender}: {text}\n\n")
+ self.chat_box.config(state="disabled")
+ self.chat_box.bakınız (tk. SON)
+
+def save_chat(self, user_text, bot_text):
+ self.users[self.current_user]["chats"].append({
+ "kullanıcı": user_text,
+ "bot": bot_text
+ })
+ self.save_users()
+
+def load_chat_history(kendi):
+ self.chat_box.config(state="normal")
+ self.chat_box.delete("1.0", tk. SON)
+
+history = self.users[self.current_user].get("chats", [])
+ Tarih Unsuru için:
+ self.chat_box.insert(tk. END, f"Sen: {item['user']}\n\n")
+ self.chat_box.insert(tk. END, f"Orbi: {item['bot']}\n\n")
+
+self.chat_box.config(state="disabled")
+ self.chat_box.bakınız (tk. SON)
+
+def update_status(kendi):
+ chat_count = len(self.users[self.current_user].get("chats", []))
+ self.status_label.config(
+ text=f"Kullanıcı: {self.current_user} | Mesaj sayısı: {chat_count} | Sohbet: sınırsız"
+ )
+
+def quick_send(self, metin):
+ self.message_entry.delete(0, tk. SON)
+ self.message_entry.insert(0, metin)
+ self.send_message()
+
+def send_message(kendi):
+ text = self.message_entry.get().strip()
+ Eğer mesaj yazmıyorsa:
+ Dönüş
+
+cevap = self.process_message(metin)
+
+self.append_chat("Sen", metin)
+ self.append_chat("Orbi", cevap)
+
+self.save_chat(mesaj, cevap)
+ self.update_status()
+
+self.message_entry.delete(0, tk. SON)
+
+# -------------------- AKILLI MANTIK --------------------
+ def is_math_expression(self, metin):
+ temizlendi = metin.replace(" ", "")
+ return bool(re.fullmatch(r"[0-9+\-*/().]+", temizlendi)) ve herhangi bir (op in "+-*/" bölümünde op için temizlendi)
+
+def calculate_math(benlik, metin):
+ temizlendi = metin.replace(" ", "")
+ return eval(cleaned, {"__builtins__": {}}, {})
+
+def handle_python(self, metin):
+ eğer metinde "döngü" ise:
+ self.set_screen("🐍 PYTHON MODU", "Döngü örneği açıldı.")
+ Aralıktaki i(5) için """"geri dön:
+ print(i)"""
+
+eğer metinde "fonksiyon" varsa:
+ self.set_screen("🐍 PYTHON MODU", "Fonksiyon örneği açıldı.")
+ return """def selam_ver(reklam):
+ baskı("Merhaba", reklam)
+
+selam_ver("Efruz")"""
+
+eğer metinde "if" olursa:
+ self.set_screen("🐍 PYTHON MODU", "if örneği açıldı.")
+ return """puan = 90
+
+Eğer puan >= 85:
+ baskı("Harika!")
+Aksi takdirde:
+ print("Devam et!")"""
+
+Eğer metinde "liste" yazıyorsa:
+ self.set_screen("🐍 PYTHON MODU", "Liste örneği açıldı.")
+ return """oyunlar = ["Minecraft", "Fortnite", "Valorant"]
+
+for oyun in oyunlar:
+ print(oyun)"""
+
+self.set_screen("🐍 PYTHON MODU", "Python komutları hazır.")
+ return """Python seçenekleri:
+- python döngü
+- python fonksiyon
+- python
+- python listesi"""
+
+def handle_project(self, metin):
+ eğer metinde "oyun" yazsaydı:
+ self.set_screen("💻 PROJE MODU", "Oyun projesi açıldı.")
+ return """Proje: Sayı Tahmin Oyunu
+
+Rastgele içe aktarma
+
+sayi = random.randint(1, 10)
+tahmin = int(giriş("Tahmin: "))
+
+if tahmin == sayi:
+ print("Kazandın!")
+Aksi takdirde:
+ print("Kaybettin!")"""
+
+Eğer metinde "hesap" yazsaydı:
+ self.set_screen("💻 PROJE MODU", "Hesap makinesi projesi açıldı.")
+ return """Proje: Hesap Makinesi
+
+a = int(input("Sayı 1: ")")
+b = int(input("Sayı 2: ")")
+print("Toplam:", a + b)"""
+
+eğer metinde "sayaç" yazsaydı:
+ self.set_screen("💻 PROJE MODU", "Sayaç projesi açıldı.")
+ return """Proje: Sayaç
+
+Aralıktaki i için(1, 11):
+ print(i)"""
+
+self.set_screen("💻 PROJE MODU", "Proje seçenekleri hazır.")
+ return """Proje seçenekleri:
+- proje oyun
+- proje hesap makinesi
+- proje sayaç"""
+
+def process_message(self, metin):
+ t = text.lower().strip()
+
+if self.is_math_expression(t):
+ Deneyin:
+ sonuç = self.calculate_math(t)
+ self.set_screen("🧮 HESAP MODU", "Matematik işlemi yapıldı.")
+ return f"Sonuç: {result}"
+ İstisna hariç:
+ self.set_screen("🧮 HESAP MODU", "İşlemde hata oldu.")
+ return "Hesaplama hatası 😅 "
+
+eğer t in ("yardım", "yardım"):
+ self.set_screen("🧠 YARDIM", "Komutlar listelendi.")
+ return """Komutlar:
+- yardım
+- durum
+- python
+- python döngü
+- python fonksiyon
+- python
+- python liste
+- proje
+- proje oyun
+- proje hesap makinesi
+- proje sayaç
+- 2+3 gibi işlem yaz"""
+
+if t in ("durum", "status"):
+ self.set_screen(" 📊 DURUM", "Hesap bilgileri gösteriliyor.")
+ chat_count = len(self.users[self.current_user].get("sohbetler", []))
+ return f"""Kullanıcı: {self.current_user}
+Mesaj sayısı: {chat_count}
+Sohbet: sınırsız
+Matematik: açık"""
+
+if t.startswith("python"):
+ Return self.handle_python(t)
+
+if t.startswith("proje"):
+ Self.hand geri dönle_project(t)
+
+T'de "merhaba" veya t'de "selam" ise:
+ self.set_screen("💬 SOHBET MODU", "Selamlaşma algılandı.")
+ "Selam 😄" geri dön
+
+eğer "nasılsın" t'de:
+ self.set_screen("💬 SOHBET MODU", "Sohbet devam ediyor.")
+ return "İyiyim 😎 Sen nasılsın?"
+
+Eğer "adın ne" t'de:
+ self.set_screen("💬 SOHBET MODU", "Kimlik cevabı verildi.")
+ return "Ben Orbi 🤖"
+
+eğer "teşekkür" t'de:
+ self.set_screen("💬 SOHBET MODU", "Nezaket algılandı.")
+ return "Rica ederim 😄"
+
+Eğer "kimim ben" t'de:
+ self.set_screen("💬 SOHBET MODU", "Kullanıcı bilgisi gösterildi.")
+ return f"Senin kullanıcı adın: {self.current_user}"
+
+self.set_screen("💬 SOHBET MODU", "Genel sohbet modu.")
+ return "Bunu tam anlayamadım. İstersen python, proje ya da matematik deneyebilirsin 😎 "
+
+eğer __name__ == "__main__":
+ kök = tk. Tk()
+ app = OrbiApp(root)
+ root.mainloop() BUNLARI EKLE BOZMADAN ÇIKARMADAN 
